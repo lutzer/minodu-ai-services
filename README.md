@@ -12,18 +12,23 @@
   ```
 
 * Install olama `curl -fsSL https://ollama.com/install.sh | sh`
+* install node js `curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash - &&\ sudo apt-get install -y nodejs`
 
 ### Install Gemma2 Model
 
 * install with `ollama run gemma2:2b` and test if it works
 * install llama with `ollama run llama3.2:1b` for a much faster model
 
-
 ### Setup Chatbot Python Script
 
-* go into *chatbot* folder and run `python -m venv .venv`
+* go into *rag* folder and run `python -m venv .venv`
 * then `source .venv/bin/activate`to activate it
 * `pip install -r requirements.txt`  to install dependencies
+
+### Setup api
+
+* go into rag-api folder
+* run `
 
 
 ## Model Benchmark
@@ -32,8 +37,6 @@
 | ----          | ----                | ----       | 
 | llama3.2:1b   |                     |            |
 | gemma2:2b     |                     |            |
-
-
 
 ## TODO
 

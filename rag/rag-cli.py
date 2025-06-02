@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 RAG (Retrieval Augmented Generation) with Ollama and Gemma2
 Processes documents and enables context-aware conversations
