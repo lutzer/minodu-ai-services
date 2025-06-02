@@ -27,8 +27,7 @@
 
 ### Setup api
 
-* go into rag-api folder
-* run `
+* check [rag-api/README.md](rag-api/README.md)
 
 
 ## Model Benchmark

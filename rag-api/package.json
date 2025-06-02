@@ -5,7 +5,7 @@
   "main": "src/app.ts",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/app.js",
+    "start": "tsc && node dist/app.js",
     "dev": "ts-node-dev --respawn src/app.ts",
     "clean": "rm -rf dist",
     "test": "jest"
