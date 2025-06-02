@@ -13,7 +13,7 @@ describe('API Routes', () => {
         setupApiRoutes(app);
     });
 
-    it('should stream response for a valid question from the cli', async () => {
+    it.skip('should stream response for a valid question from the cli', async () => {
         const question = "Hello";
 
         const webStream = await RagService.askQuestion(question);
@@ -28,29 +28,19 @@ describe('API Routes', () => {
         }
 
         expect(result.length).toBeGreaterThan(0)
-        
     }, 100000);
 
-    // it('should stream response for a valid question to the api/ask', async () => {
-    //     const question = "Hello";
-    //     const response = await request(app)
-    //         .post('/ask')
-    //         .send({ question })
-    //         .set('Accept', 'text/event-stream');
+    it('should stream response for a valid question to the api/ask', async () => {
+        const question = "Hello";
+        const response = await request(app)
+            .post('/api/ask')
+            .send({ question })
+            .set('Accept', 'text/event-stream');
 
-    //     expect(response.status).toBe(200);
-    //     expect(response.headers['content-type']).toMatch(/text\/event-stream/);
+        expect(response.status).toBe(200);
+        expect(response.headers['content-type']).toMatch(/text\/event-stream/);
         
-    //     // If you need to test the stream content
-    //     const streamData = response.text;
-    //     expect(streamData).toBeTruthy();
-    // });
-
-    // it('should return 400 for empty question', async () => {
-    //     const response = await request(app)
-    //         .post('/ask')
-    //         .send({ question: '' });
-
-    //     expect(response.status).toBe(400);
-    // });
+        const streamData = response.text;
+        expect(streamData.length).toBeGreaterThan(0)
+    }, 100000);
 });
