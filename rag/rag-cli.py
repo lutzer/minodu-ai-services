@@ -5,6 +5,7 @@ Processes documents and enables context-aware conversations
 
 import os
 import sys
+import textwrap
 import requests
 import json
 import PyPDF2
@@ -233,28 +234,51 @@ class RagCli:
         except:
             return []
     
-    def ask_question(self, question: str, use_context: bool = True, stream: bool = False) -> str:
+    def ask_question(self, question: str, use_context: bool = True, conversation: str = "", stream: bool = False) -> str:
         """Ask a question with optional document context"""
-        if use_context:
-            # Retrieve relevant chunks
-            relevant_chunks = self.retrieve_relevant_chunks(question, n_results=3)
-            
-            if relevant_chunks:
-                context = "\n\n".join(relevant_chunks)
-                prompt = f"""Context from documents:
-{context}
+        # Retrieve relevant chunks
+        relevant_chunks = self.retrieve_relevant_chunks(question, n_results=3) if use_context else None
 
-Question: {question} 
-
-This is very important:
-Please answer the question based on the provided context. 
-If the context doesn't contain enough information, please say so. 
-If the question has nothing to do with the context, dont answer the question, just say you dont have any information about the subject
-At the end of your answer, provide up to three relevant follow up questions the user might ask about the provided context."""
-            else:
-                prompt = f"No relevant context found. Question: {question}"
+        prompt = ""
+        
+        if relevant_chunks:
+            context = "\n\n".join(relevant_chunks)
+            prompt += textwrap.dedent(f"""
+                Context from documents:
+                {context}
+                """)
         else:
-            prompt = question
+            prompt += textwrap.dedent(f"""
+                No relevant context found in the database.
+                """)
+            
+        if (len(conversation) > 0):
+            prompt += textwrap.dedent(f"""
+                Context from previous conversation:
+                {conversation}
+                """)
+            
+        prompt += textwrap.dedent(f"""
+                Question:
+                {question} 
+                """)
+        
+        if (use_context):
+            prompt += textwrap.dedent(f"""
+                This is very important:
+                Please answer the question based on the provided context. 
+                If the context doesn't contain enough information, please say so. 
+                If the question has nothing to do with the context, dont answer the question, just say you dont have any information about the subject
+                """)
+        
+        # if (use_context):
+        #     prompt += textwrap.dedent(f"""
+        #         This is very important:
+        #         Please answer the question based on the provided context. 
+        #         If the context doesn't contain enough information, please say so. 
+        #         If the question has nothing to do with the context, dont answer the question, just say you dont have any information about the subject
+        #         At the end of your answer, provide up to three relevant follow up questions the user might ask about the provided context.
+        #         """)
         
         try:
             return self.call_ollama(prompt, stream=stream)
@@ -332,7 +356,8 @@ def main():
     parser.add_argument("--add-doc", help="Add a document to the knowledge base")
     parser.add_argument("--list-docs", action='store_true', help="Lists all documents of the knowldge base")
     parser.add_argument("--question", help="Ask a single question")
-    parser.add_argument("--stream", action="store_true", help="Stream generated tokens")
+    parser.add_argument("--conversation", default="", help="Previous conversation")
+    parser.add_argument("--no-stream", action="store_true", help="Dont stream generated tokens")
     parser.add_argument("--interactive", action="store_true", help="Start interactive mode")
     
     args = parser.parse_args()
@@ -348,8 +373,8 @@ def main():
     
     elif args.question:
         rag = RagCli(model_name=args.model)
-        response = rag.ask_question(args.question, stream=args.stream)
-        if not args.stream and response is not None:
+        response = rag.ask_question(args.question, conversation=args.conversation, stream=not args.no_stream)
+        if args.no_stream and response is not None:
             print(f"{response}")
 
     elif args.interactive:

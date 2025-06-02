@@ -9,8 +9,7 @@ export class RagService {
                 const pythonProcess = spawn(config.venvPath, [
                     config.cliPath,
                     '--model', config.model,
-                    '--question', question,
-                    '--stream'
+                    '--question', question
                 ]);
 
 

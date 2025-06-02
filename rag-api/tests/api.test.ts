@@ -13,7 +13,7 @@ describe('API Routes', () => {
         setupApiRoutes(app);
     });
 
-    it.skip('should stream response for a valid question from the cli', async () => {
+    it('should stream response for a valid question from the cli', async () => {
         const question = "Hello";
 
         const webStream = await RagService.askQuestion(question);
