@@ -5,6 +5,7 @@ Processes documents and enables context-aware conversations
 """
 
 import os
+import sys
 import requests
 import json
 import PyPDF2
@@ -13,8 +14,8 @@ from sentence_transformers import SentenceTransformer
 from typing import List, Dict
 import argparse
 
-class RAGWithOllama:
-    def __init__(self, model_name="gemma2", ollama_url="http://localhost:11434"):
+class RagCli:
+    def __init__(self, model_name="gemma2:2b", ollama_url="http://localhost:11434"):
         self.model_name = model_name
         self.ollama_url = ollama_url
         self.embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
@@ -101,15 +102,15 @@ class RAGWithOllama:
     
     def call_ollama(self, prompt: str, stream: bool = True) -> str:
         """Call Ollama API with the prompt"""
+
         # First check if Ollama is running
         try:
             health_response = requests.get(f"{self.ollama_url}")
             if health_response.status_code != 200:
-                return "Error: Ollama is not running. Please start it with 'ollama serve'"
+                raise Exception("Error: Ollama is not running. Please start it with 'ollama serve'")
         except requests.exceptions.ConnectionError:
-            return "Error: Cannot connect to Ollama. Please start it with 'ollama serve'"
-        
-        print(f"calling ollama with prompt length: {len(prompt)}")
+                raise Exception("Error: Cannot connect to Ollama. Please start it with 'ollama serve'")
+
         
         url = f"{self.ollama_url}/api/generate"
         data = {
@@ -136,13 +137,12 @@ class RAGWithOllama:
                     full_response += chunk
                     if json_response.get('done', False):
                         break
-            print()  # New line after response is complete
             return full_response
             
         except requests.exceptions.RequestException as e:
             if "404" in str(e):
-                return f"Error: Model '{self.model_name}' not found. Available models: {self.get_available_models()}"
-            return f"Error calling Ollama: {e}"
+                raise Exception(f"Error: Model '{self.model_name}' not found.")
+            raise Exception(f"Error calling Ollama: {e}")
     
     def list_documents(self):
         """List all documents in the knowledge base"""
@@ -234,7 +234,7 @@ class RAGWithOllama:
         except:
             return []
     
-    def ask_question(self, question: str, use_context: bool = True) -> str:
+    def ask_question(self, question: str, use_context: bool = True, stream: bool = False) -> str:
         """Ask a question with optional document context"""
         if use_context:
             # Retrieve relevant chunks
@@ -257,11 +257,14 @@ At the end of your answer, provide up to three relevant follow up questions the 
         else:
             prompt = question
         
-        return self.call_ollama(prompt)
+        try:
+            return self.call_ollama(prompt, stream=stream)
+        except Exception as e:
+            print(f"ERROR: {e}", file=sys.stderr, flush=True)
     
     def interactive_chat(self):
         """Start an interactive chat session"""
-        print("RAG Chat with Gemma2 (type 'quit' to exit, 'no-context' to disable RAG)")
+        print(f"RAG Chat with {self.model_name} (type 'quit' to exit, 'no-context' to disable RAG)")
         print("Available commands:")
         print("  /add <file_path> - Add a document to the knowledge base")
         print("  /list - List all documents in the knowledge base")
@@ -315,9 +318,8 @@ At the end of your answer, provide up to three relevant follow up questions the 
                     if confirm.lower() == 'y':
                         self.clear_all_documents()
                 elif user_input:
-                    print("Thinking...")
-                    response = self.ask_question(user_input, use_context)
-                    print(f"\nGemma2: {response}")
+                    print("[Thinking...]")
+                    self.ask_question(user_input, use_context, True)
                     
             except KeyboardInterrupt:
                 print("\nGoodbye!")
@@ -331,26 +333,28 @@ def main():
     parser.add_argument("--add-doc", help="Add a document to the knowledge base")
     parser.add_argument("--list-docs", action='store_true', help="Lists all documents of the knowldge base")
     parser.add_argument("--question", help="Ask a single question")
+    parser.add_argument("--stream", action="store_true", help="Stream generated tokens")
     parser.add_argument("--interactive", action="store_true", help="Start interactive mode")
     
     args = parser.parse_args()
     
     if args.add_doc:
-        rag = RAGWithOllama(model_name=args.model)
+        rag = RagCli(model_name=args.model)
         rag.add_document(args.add_doc)
         print("Document added successfully!")
 
     elif args.list_docs:
-        rag = RAGWithOllama(model_name=args.model)
+        rag = RagCli(model_name=args.model)
         rag.list_documents()
     
     elif args.question:
-        rag = RAGWithOllama(model_name=args.model)
-        response = rag.ask_question(args.question)
-        print(f"Answer: {response}")
+        rag = RagCli(model_name=args.model)
+        response = rag.ask_question(args.question, stream=args.stream)
+        if not args.stream and response is not None:
+            print(f"{response}")
 
     elif args.interactive:
-        rag = RAGWithOllama(model_name=args.model)
+        rag = RagCli(model_name=args.model)
         rag.interactive_chat()
 
     else:

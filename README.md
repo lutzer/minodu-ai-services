@@ -26,6 +26,12 @@
 * `pip install -r requirements.txt`  to install dependencies
 
 
+## Model Benchmark
+
+| Model         | First token time    | Token time | 
+| ----          | ----                | ----       | 
+| llama3.2:1b   |                     |            |
+| gemma2:2b     |                     |            |
 
 
 
