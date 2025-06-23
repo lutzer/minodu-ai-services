@@ -16,21 +16,23 @@ import argparse
 
 # Constants
 
-PROMPT_CONTEXT = ["Context from documents:", "Contexte à partir de documents:"]
-PROMPT_QUESTION = ["Question:", "Question:"]
+PROMPT_CONTEXT = ["Context", "Contexte"]
+PROMPT_QUESTION = ["Question", "Question"]
 PROMPT_NOCONTEXT = ["No relevant context found in the database.", "Aucun contexte pertinent n'a été trouvé dans la base de données."]
-PROMPT_CONVERSATION = ["Context from previous conversation:", "Contexte de la conversation précédente:"]
-PROMPT_EXTRA = ["""
-This is very important:
-Please answer the question based on the provided context. 
+PROMPT_CONVERSATION = ["Previous Conversation", "conversation précédente:"]
+PROMPT_INSTRUCTIONS = ["""
+[Instructions]
+Please answer the question based on the provided context.
+Answer the question in english.
 If the context doesn't contain enough information, please say so. 
-If the question has nothing to do with the context, dont answer the question, just say you dont have any information about the subject
+If the question has nothing to do with the context, please say so and suggest the user what context you have knowledge about.
 """,
 """
-Ceci est très important :
-Veuillez répondre à la question en vous basant sur le contexte fourni. 
-Si le contexte ne contient pas suffisamment d'informations, dites-le. 
-Si la question n'a rien à voir avec le contexte, ne répondez pas à la question, dites simplement que vous n'avez aucune information sur le sujet.
+[Instructions]
+Veuillez répondre à la question en vous basant sur le contexte fourni.
+Répondez à la question en français.
+Si le contexte ne contient pas suffisamment d'informations, veuillez le préciser. 
+Si la question n'a rien à voir avec le contexte, veuillez le préciser et suggérer à l'utilisateur le contexte dont vous avez connaissance.
 """]
 
 class RagCli:
@@ -259,38 +261,36 @@ class RagCli:
         # Retrieve relevant chunks
         relevant_chunks = self.retrieve_relevant_chunks(question, n_results=5) if use_context else None
 
-        prompt = ""
+        prompt = PROMPT_INSTRUCTIONS[self.language]
         
         if relevant_chunks:
             context = "\n\n".join(relevant_chunks)
             prompt += textwrap.dedent(f"""
-                {PROMPT_CONTEXT[self.language]}
+                                      
+                [{PROMPT_CONTEXT[self.language]}]
                 {context}
                 """)
         else:
             prompt += textwrap.dedent(f"""
-
+                                      
+                [{PROMPT_CONTEXT[self.language]}]
                 {PROMPT_NOCONTEXT[self.language]}
                 """)
             
         if (len(conversation) > 0):
             prompt += textwrap.dedent(f"""
 
-                {PROMPT_CONVERSATION[self.language]}
+                [{PROMPT_CONVERSATION[self.language]}]
                 {conversation}
                 """)
             
         prompt += textwrap.dedent(f"""
 
-                {PROMPT_QUESTION[self.language]}
+                [{PROMPT_QUESTION[self.language]}]
                 {question} 
                 """)
-        
-        if (use_context):
-            prompt += textwrap.dedent(f"""
 
-                {PROMPT_EXTRA[self.language]}
-                """)
+        print(prompt)
         
         # if (use_context):
         #     prompt += textwrap.dedent(f"""
