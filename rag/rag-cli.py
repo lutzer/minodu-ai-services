@@ -14,10 +14,30 @@ from sentence_transformers import SentenceTransformer
 from typing import List, Dict
 import argparse
 
+# Constants
+
+PROMPT_CONTEXT = ["Context from documents:", "Contexte à partir de documents:"]
+PROMPT_QUESTION = ["Question:", "Question:"]
+PROMPT_NOCONTEXT = ["No relevant context found in the database.", "Aucun contexte pertinent n'a été trouvé dans la base de données."]
+PROMPT_CONVERSATION = ["Context from previous conversation:", "Contexte de la conversation précédente:"]
+PROMPT_EXTRA = ["""
+This is very important:
+Please answer the question based on the provided context. 
+If the context doesn't contain enough information, please say so. 
+If the question has nothing to do with the context, dont answer the question, just say you dont have any information about the subject
+""",
+"""
+Ceci est très important :
+Veuillez répondre à la question en vous basant sur le contexte fourni. 
+Si le contexte ne contient pas suffisamment d'informations, dites-le. 
+Si la question n'a rien à voir avec le contexte, ne répondez pas à la question, dites simplement que vous n'avez aucune information sur le sujet.
+"""]
+
 class RagCli:
-    def __init__(self, model_name="gemma2:2b", ollama_url="http://localhost:11434"):
+    def __init__(self, model_name="gemma2:2b", language="en", ollama_url="http://localhost:11434"):
         self.model_name = model_name
         self.ollama_url = ollama_url
+        self.language = 0 if language == "en" else 1
         self.embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
         
         # Initialize ChromaDB
@@ -244,32 +264,31 @@ class RagCli:
         if relevant_chunks:
             context = "\n\n".join(relevant_chunks)
             prompt += textwrap.dedent(f"""
-                Context from documents:
+                {PROMPT_CONTEXT[self.language]}
                 {context}
                 """)
         else:
             prompt += textwrap.dedent(f"""
-                No relevant context found in the database.
+                {PROMPT_NOCONTEXT[self.language]}
                 """)
             
         if (len(conversation) > 0):
             prompt += textwrap.dedent(f"""
-                Context from previous conversation:
+                {PROMPT_CONVERSATION[self.language]}
                 {conversation}
                 """)
             
         prompt += textwrap.dedent(f"""
-                Question:
+                {PROMPT_QUESTION[self.language]}
                 {question} 
                 """)
         
         if (use_context):
             prompt += textwrap.dedent(f"""
-                This is very important:
-                Please answer the question based on the provided context. 
-                If the context doesn't contain enough information, please say so. 
-                If the question has nothing to do with the context, dont answer the question, just say you dont have any information about the subject
+                {PROMPT_EXTRA[self.language]}
                 """)
+            
+        print(f"Prompt: {prompt}")
         
         # if (use_context):
         #     prompt += textwrap.dedent(f"""
@@ -353,6 +372,7 @@ class RagCli:
 def main():
     parser = argparse.ArgumentParser(description="RAG with Ollama and Gemma2")
     parser.add_argument("--model", default="gemma2:2b", help="Ollama model name")
+    parser.add_argument("--language", default="en", help="Conversation language, either en or fr")
     parser.add_argument("--add-doc", help="Add a document to the knowledge base")
     parser.add_argument("--list-docs", action='store_true', help="Lists all documents of the knowldge base")
     parser.add_argument("--question", help="Ask a single question")
@@ -361,24 +381,28 @@ def main():
     parser.add_argument("--interactive", action="store_true", help="Start interactive mode")
     
     args = parser.parse_args()
-    
-    if args.add_doc:
-        rag = RagCli(model_name=args.model)
+
+    if not(args.language == "en" or args.language == "fr"):
+        print("The only available languages are 'en' or 'fr'")
+        parser.print_help()
+
+    elif args.add_doc:
+        rag = RagCli(model_name=args.model, language=args.language)
         rag.add_document(args.add_doc)
         print("Document added successfully!")
 
     elif args.list_docs:
-        rag = RagCli(model_name=args.model)
+        rag = RagCli(model_name=args.model, language=args.language)
         rag.list_documents()
     
     elif args.question:
-        rag = RagCli(model_name=args.model)
+        rag = RagCli(model_name=args.model, language=args.language)
         response = rag.ask_question(args.question, conversation=args.conversation, stream=not args.no_stream)
         if args.no_stream and response is not None:
             print(f"{response}")
 
     elif args.interactive:
-        rag = RagCli(model_name=args.model)
+        rag = RagCli(model_name=args.model, language=args.language)
         rag.interactive_chat()
 
     else:
