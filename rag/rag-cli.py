@@ -288,7 +288,7 @@ class RagCli:
                 {PROMPT_EXTRA[self.language]}
                 """)
             
-        print(f"Prompt: {prompt}")
+        #print(f"Prompt: {prompt}")
         
         # if (use_context):
         #     prompt += textwrap.dedent(f"""

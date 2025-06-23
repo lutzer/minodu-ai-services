@@ -23,6 +23,32 @@ This project is a Node.js application that interfaces with the `rag-cli.py` scri
 4. **Access the API:**
    The API will be available at `http://localhost:3000/api`.
 
+5. **Autostart API:**
+   * create file `sudo nano /etc/systemd/system/rag-api.service`
+   ```
+   [Unit]
+   Description=Mindo RAG API
+   After=network.target
+
+   [Service]
+   WorkingDirectory=/home/<user>/minodu-bot/rag-api
+   ExecStart=/usr/bin/npm start
+   Restart=always
+   Environment=NODE_ENV=production
+   User=<user>
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+   * then run:
+   ```
+   sudo systemctl daemon-reexec
+   sudo systemctl daemon-reload
+   sudo systemctl enable my-service.service
+   sudo systemctl start my-service.service
+   ```
+
+
 ## Usage
 
 - To call the RAG functionality, send a request to the `/api` endpoint with the necessary parameters.
