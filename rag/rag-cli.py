@@ -289,8 +289,6 @@ class RagCli:
                 [{PROMPT_QUESTION[self.language]}]
                 {question} 
                 """)
-
-        print(prompt)
         
         # if (use_context):
         #     prompt += textwrap.dedent(f"""
