@@ -3,15 +3,16 @@ import config from '../config'
 
 export class RagService {
 
-    static async askQuestion(question: string): Promise<ReadableStream> {
+    static async askQuestion(question: string, conversation: string = ""): Promise<ReadableStream> {
         return new ReadableStream({
             start: (controller) => {
                 const pythonProcess = spawn(config.venvPath, [
                     config.cliPath,
                     '--model', config.model,
+                    '--conversation', conversation,
+                    '--language', config.language,
                     '--question', question
                 ]);
-
 
                 pythonProcess.stdout.on('data', (data) => {
                     controller.enqueue(data.toString());

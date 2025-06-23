@@ -51,6 +51,10 @@ button:hover {
     background-color: #0056b3;
 }
 
+button:disabled {
+    opacity: 0.2;
+}
+
 .message {
     margin-bottom: 15px;
     padding: 10px;

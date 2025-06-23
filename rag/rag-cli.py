@@ -257,7 +257,7 @@ class RagCli:
     def ask_question(self, question: str, use_context: bool = True, conversation: str = "", stream: bool = False) -> str:
         """Ask a question with optional document context"""
         # Retrieve relevant chunks
-        relevant_chunks = self.retrieve_relevant_chunks(question, n_results=3) if use_context else None
+        relevant_chunks = self.retrieve_relevant_chunks(question, n_results=5) if use_context else None
 
         prompt = ""
         
@@ -269,26 +269,28 @@ class RagCli:
                 """)
         else:
             prompt += textwrap.dedent(f"""
+
                 {PROMPT_NOCONTEXT[self.language]}
                 """)
             
         if (len(conversation) > 0):
             prompt += textwrap.dedent(f"""
+
                 {PROMPT_CONVERSATION[self.language]}
                 {conversation}
                 """)
             
         prompt += textwrap.dedent(f"""
+
                 {PROMPT_QUESTION[self.language]}
                 {question} 
                 """)
         
         if (use_context):
             prompt += textwrap.dedent(f"""
+
                 {PROMPT_EXTRA[self.language]}
                 """)
-            
-        #print(f"Prompt: {prompt}")
         
         # if (use_context):
         #     prompt += textwrap.dedent(f"""

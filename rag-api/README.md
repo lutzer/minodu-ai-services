@@ -44,8 +44,8 @@ This project is a Node.js application that interfaces with the `rag-cli.py` scri
    ```
    sudo systemctl daemon-reexec
    sudo systemctl daemon-reload
-   sudo systemctl enable my-service.service
-   sudo systemctl start my-service.service
+   sudo systemctl enable rag-api.service
+   sudo systemctl start rag-api.service
    ```
 
 
@@ -61,3 +61,7 @@ To run the tests, use the following command:
 ```bash
 npm test
 ```
+
+## Todo
+
+* create docker container

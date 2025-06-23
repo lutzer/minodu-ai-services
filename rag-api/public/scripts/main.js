@@ -15,11 +15,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const question = userInput.value.trim();
         if (!question) return;
 
+        const conversation = Array.from(document.querySelectorAll("div.message"))
+            .map((e) => e.innerHTML)
+            .map((s) => s.replace(/[\r\n\t]/g, ''))
+            .join(";")
+
         // Add user message to chat
         addMessage(question, true);
         
         // Clear input
         userInput.value = '';
+
+        sendButton.disabled = true
 
         try {
             const response = await fetch('/api/ask', {
@@ -28,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     'Content-Type': 'application/json',
                     'Accept': 'text/event-stream'
                 },
-                body: JSON.stringify({ question })
+                body: JSON.stringify({ question, conversation })
             });
 
             const reader = response.body.getReader();
@@ -50,9 +57,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     addMessage(botResponse);
                 }
             }
+            sendButton.disabled = false
         } catch (error) {
             console.error('Error:', error);
             addMessage('Error: Could not get response from server');
+            sendButton.disabled = false
         }
     }
 
