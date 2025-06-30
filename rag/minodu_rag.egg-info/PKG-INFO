@@ -1,0 +1,56 @@
+Metadata-Version: 2.1
+Name: minodu-rag
+Version: 0.1.0
+Summary: A Rag LLM for the minodu project
+Home-page: https://github.com/lutzer/minodu-bot
+Author: Lutz Reiter
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+
+# MINODU BOT
+
+
+
+## Setup
+
+* install raspberry pi os
+
+  ```
+  sudo apt update
+  sudo apt upgrade
+  ```
+
+* Install olama `curl -fsSL https://ollama.com/install.sh | sh`
+* install node js `curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash - &&\ sudo apt-get install -y nodejs`
+
+### Install Gemma2 Model
+
+* install with `ollama run gemma2:2b` and test if it works
+* install llama with `ollama run llama3.2:1b` for a much faster model
+
+### Setup Chatbot Python Script
+
+* go into *rag* folder and run `python -m venv .venv`
+* then `source .venv/bin/activate`to activate it
+* `pip install -r requirements.txt`  to install dependencies
+
+### Setup api
+
+* check [rag-api/README.md](rag-api/README.md)
+
+
+## Model Benchmark
+
+| Model         | First token time    | Token time | 
+| ----          | ----                | ----       | 
+| llama3.2:1b   |                     |            |
+| gemma2:2b     |                     |            |
+
+## TODO
+
+* try out 
+  * Llama 3.2 3B: Often faster inference than Gemma2:2b despite being larger
+  * Qwen2.5 1.5B: Excellent context handling, very efficient
+
+
+
