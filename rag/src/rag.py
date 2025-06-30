@@ -91,7 +91,7 @@ class RAG:
                 ===== CONTEXTE DE LA BASE DE DONNÉES DES VECTEURS =====
                 Les informations suivantes ont été extraites de la base de connaissances :
 
-                {contexte}
+                {context}
 
                 ===== END CONTEXT =====
 
