@@ -1,7 +1,5 @@
 # MINODU BOT
 
-
-
 ## Setup
 
 * install raspberry pi os
@@ -14,21 +12,23 @@
 * Install olama `curl -fsSL https://ollama.com/install.sh | sh`
 * install node js `curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash - &&\ sudo apt-get install -y nodejs`
 
-### Install Gemma2 Model
+### Install Models
 
-* install with `ollama run gemma2:2b` and test if it works
-* install llama with `ollama run llama3.2:1b` for a much faster model
+```
+ollama pull llama3.2:1b
+ollama pull nomic-embed-text  # For embeddings
+```
 
 ### Setup Chatbot Python Script
 
 * go into *rag* folder and run `python -m venv .venv`
 * then `source .venv/bin/activate`to activate it
 * `pip install -r requirements.txt`  to install dependencies
+* add documents with `python src/rag.py --add-docs ../documents/fr/ --language=fr`
 
 ### Setup api
 
 * check [rag-api/README.md](rag-api/README.md)
-
 
 ## Model Benchmark
 
