@@ -12,14 +12,28 @@
         <div class="chat-box" id="chat-box">
             <!-- Messages will appear here -->
         </div>
+        
         <div class="input-container">
             <textarea 
                 id="user-input" 
                 placeholder="Type your question here..."
                 rows="3"
             ></textarea>
+           
             <button id="send-button">Send</button>
         </div>
+         <fieldset>
+            <div>
+                <input type="radio" id="francais" name="language" value="fr" checked />
+                <label for="francais">Francais</label>
+            </div>
+
+            <div>
+                <input type="radio" id="english" name="language" value="en" />
+                <label for="english">English</label>
+            </div>
+        </fieldset>
+        
     </div>
     <script src="scripts/main.js"></script>
 </body>
