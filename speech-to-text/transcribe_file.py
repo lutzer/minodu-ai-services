@@ -1,6 +1,7 @@
 from vosk import Model, KaldiRecognizer
 import argparse
 import os
+import wave
 
 def main():
 
@@ -14,6 +15,11 @@ def main():
         parser.print_help()
         return
 
+    wf = wave.open(args.file, "rb")
+    if wf.getnchannels() != 1 or wf.getsampwidth() != 2 or wf.getcomptype() != "NONE":
+        print("Audio file must be WAV format mono PCM.")
+        sys.exit(1)
+
     # Path to the Vosk model
     #model_path = "models/vosk-model-small-pl-0.22/"
     model_path = "models/vosk-model-small-en-us-0.15" if args.language == "en" else "models/vosk-model-small-fr-0.22"
@@ -22,20 +28,17 @@ def main():
         exit(1)
 
     model = Model(model_path)
-    recognizer = KaldiRecognizer(model, 16000)
+    recognizer = KaldiRecognizer(model, wf.getframerate())
+    recognizer.SetWords(True)
+    recognizer.SetPartialWords(True)
 
-    with open(args.file, "rb") as audio:
-        while True:
-            # Read a chunk of the audio file
-            data = audio.read(4000)
-            if len(data) == 0:
-                break
-            # Recognize the speech in the chunk
-            recognizer.AcceptWaveform(data)
+    while True:
+        data = wf.readframes(4000)
+        if len(data) == 0:
+            break
+        recognizer.AcceptWaveform(data)
 
-        # Get the final recognized result
-        result = recognizer.FinalResult()
-        print(result)
+    print(recognizer.FinalResult())
 
 if __name__ == "__main__":
     main()
