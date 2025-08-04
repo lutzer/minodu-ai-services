@@ -29,6 +29,10 @@
 
 * check [rag-api/README.md](rag-api/README.md)
 
+### setup Speech to text
+
+* `brew install portaudio`
+* `cd tts && pip install -r requirements.txt`
 
 ## Model Benchmark
 
