@@ -32,8 +32,10 @@ ollama pull nomic-embed-text  # For embeddings
 
 ### setup Speech to text
 
-* `brew install portaudio`
-* `cd tts && pip install -r requirements.txt`
+* go into *tts* folder and run `python -m venv .venv`
+* then `source .venv/bin/activate`to activate it
+* `apt-get install portaudio`
+* `pip install -r requirements.txt`
 
 ## Model Benchmark
 
