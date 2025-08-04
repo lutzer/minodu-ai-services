@@ -20,6 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
             .map((s) => s.replace(/[\r\n\t]/g, ''))
             .join(";")
 
+        const language = document.querySelector('input[name="language"]:checked').value;
+
         // Add user message to chat
         addMessage(question, true);
         
@@ -35,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     'Content-Type': 'application/json',
                     'Accept': 'text/event-stream'
                 },
-                body: JSON.stringify({ question, conversation })
+                body: JSON.stringify({ question, conversation, language })
             });
 
             const reader = response.body.getReader();

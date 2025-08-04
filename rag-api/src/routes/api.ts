@@ -10,13 +10,14 @@ export function setupApiRoutes(app: any) {
     router.post('/ask', async (req: Request, res: Response) => {
         const question = req.body.question;
         const conversation = req.body.conversation;
+        const language = req.body.language
 
         if (!question) {
             return res.status(400).json({ error: 'Question is required' });
         }
 
         try {
-            const webStream = await RagService.askQuestion(question, conversation);
+            const webStream = await RagService.askQuestion(question, conversation, language);
 
             res.setHeader('Content-Type', 'text/event-stream');
             res.setHeader('Cache-Control', 'no-cache');
