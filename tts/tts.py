@@ -1,30 +1,47 @@
+# sudo apt-get install pip
+# sudo apt-get install -y python3-pyaudio
+# sudo pip3 install vosk
+
+import os
+import sys
+import json
+import contextlib
+import pyaudio
+import io
 from vosk import Model, KaldiRecognizer
-import wave
-import time
 
+# Path to the Vosk model
+#model_path = "models/vosk-model-small-pl-0.22/"
+model_path = "models/vosk-model-small-en-us-0.15/"
+if not os.path.exists(model_path):
+    print(f"Model '{model_path}' was not found. Please check the path.")
+    exit(1)
 
+model = Model(model_path)
 
-def main():
-    # Start timer
-    start_time = time.perf_counter()
+# Settings for PyAudio
+sample_rate = 16000
+chunk_size = 8192
+format = pyaudio.paInt16
+channels = 1
 
-    wf = wave.open("audios/hello.wav", "rb")
-    model = Model("models/vosk-model-small-en-us-0.15")  # Download a Vosk model and specify the path
-    rec = KaldiRecognizer(model, wf.getframerate())
+# Initialization of PyAudio and speech recognition
+p = pyaudio.PyAudio()
+stream = p.open(format=format, channels=channels, rate=sample_rate, input=True, frames_per_buffer=chunk_size)
+recognizer = KaldiRecognizer(model, sample_rate)
 
-    while True:
-        data = wf.readframes(4000)
-        if len(data) == 0:
-            break
-        if rec.AcceptWaveform(data):
-            print(rec.Result())
+os.system('clear')
+print("\nSpeak now...")
 
-    # End timer
-    end_time = time.perf_counter()
-
-    # Calculate elapsed time
-    elapsed_time = end_time - start_time
-    print(f"Elapsed time: {elapsed_time:.6f} seconds")
-
-if __name__ == "__main__":
-    main()
+while True:
+    data = stream.read(chunk_size)
+    if recognizer.AcceptWaveform(data):
+        result_json = json.loads(recognizer.Result())
+        text = result_json.get('text', '')
+        if text:
+            print("\r" + text, end='\n')
+    else:
+        partial_json = json.loads(recognizer.PartialResult())
+        partial = partial_json.get('partial', '')
+        sys.stdout.write('\r' + partial)
+        sys.stdout.flush()
