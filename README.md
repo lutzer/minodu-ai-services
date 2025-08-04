@@ -36,6 +36,7 @@ ollama pull nomic-embed-text  # For embeddings
 * then `source .venv/bin/activate`to activate it
 * `apt-get install portaudio`
 * `pip install -r requirements.txt`
+* unpack zip files in model folder
 
 ## Model Benchmark
 
