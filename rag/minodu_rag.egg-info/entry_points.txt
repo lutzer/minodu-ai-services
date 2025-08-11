@@ -1,2 +1,0 @@
-[console_scripts]
-minodu-rag = src.rag:main

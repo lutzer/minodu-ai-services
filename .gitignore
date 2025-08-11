@@ -1,7 +1,2 @@
-.DS_Store
 .venv
-node_modules
-*.sqlite3
-rag-api/dist
-rag/database
 __pycache__

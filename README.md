@@ -19,11 +19,19 @@ ollama pull llama3.2:1b
 ollama pull nomic-embed-text  # For embeddings
 ```
 
+### Setup Service API
+
+* install pyenv
+* run `pyenv install 3.11` and set global with `pyenv global 3.11`
+* create venv with `python -m venv .venv`
+* then `source .venv/bin/activate`to activate it
+* `pip install -r requirements.txt`  to install dependencies
+
 ### Setup Chatbot Python Script
 
 * go into *rag* folder and run `python -m venv .venv`
-* then `source .venv/bin/activate`to activate it
-* `pip install -r requirements.txt`  to install dependencies
+
+
 * add documents with `python src/rag.py --add-docs ../documents/fr/ --language=fr`
 
 ### Setup api
