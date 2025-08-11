@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile
 from pydantic import BaseModel
 from fastapi.responses import StreamingResponse
 import os
@@ -17,11 +17,6 @@ class RagRequest(BaseModel):
     language: str
     question: str
 
-# Response model
-class RagResponse(BaseModel):
-    status: str
-    answer: str
-
 @app.get("/")
 async def root():
     return {"message": "Simple FastAPI boilerplate"}
@@ -38,3 +33,12 @@ async def rag_ask(request: RagRequest):
         generate_stream(),
         media_type="text/plain"
     )
+
+class SttRequest(BaseModel):
+    conversation: str
+    language: str
+    question: str
+
+@app.post("/stt/transcribe")
+async def stt_transcribe(file: UploadFile):
+    print(file)
