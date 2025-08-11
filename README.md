@@ -19,7 +19,7 @@
   ollama pull llama3.2:1b
   ollama pull nomic-embed-text  # For embeddings
   ```
-* unzip vosk models with `cd models &&unzip *.zip`
+* unzip vosk models with `cd data/stt_models &&unzip *.zip`
 
 ### Setup Service API
 
@@ -31,8 +31,8 @@
 
 ### Add Documents to chatbot
 
-* add documents with `python src/rag.py --add-docs ../documents/fr/ --language=fr`
-* add documents with `python src/rag.py --add-docs ../documents/en/ --language=en`
+* add documents with `python src/rag.py --add-docs data/documents/fr/ --language=fr`
+* add documents with `python src/rag.py --add-docs data/documents/en/ --language=en`
 
 
 
