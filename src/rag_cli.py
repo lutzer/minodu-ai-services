@@ -24,9 +24,12 @@ def main():
 
     if args.question:
         rag = RAG(language=args.language)
-        response = rag.ask(args.question, args.history, stream=not args.no_stream)
-        if args.no_stream and response is not None:
-            print(f"{response}")
+        if args.no_stream:
+            result = rag.ask(args.question, args.history)
+            print(result)
+        else:
+            for result in rag.ask_streaming(args.question, args.history):
+                print(result, end="", flush=True)
     elif args.add_doc:
         rag = RAG(language=args.language)
         store = DocumentStore(rag.vectorstore, rag.chroma_client)

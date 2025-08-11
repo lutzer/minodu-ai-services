@@ -11,17 +11,18 @@ class TestAPI:
 
     def test_rag_ask(self):
         test_data = {
-            "question": "Hello how are you?",
+            "question": "This is a generic question.",
             "conversation" : "",
             "language": "en"
         }
         response = client.post(app.root_path + "/rag/ask", json=test_data)
         
         assert response.status_code == 200
-        response_data = response.json()
+
+        print(response.text)
         
-        assert len(response_data["answer"]) > 0
-        
+        assert len(response.text) > 0
+
 if __name__ == "__main__":
     # Run tests if script is executed directly
     pytest.main([__file__, "-v"])

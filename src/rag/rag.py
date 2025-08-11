@@ -4,12 +4,13 @@ import logging
 from langchain_ollama.llms import OllamaLLM
 from langchain_ollama import OllamaEmbeddings
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.runnables import RunnablePassthrough
+from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 from langchain.schema.output_parser import StrOutputParser
 from langchain_chroma import Chroma
 import chromadb
 from chromadb.config import Settings
 import textwrap
+from typing import Iterator
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -112,20 +113,20 @@ class RAG:
         
         # Create the chain
         self.chain = (
-            {"context": self.vectorstore.as_retriever(), "question": RunnablePassthrough(), "history": RunnablePassthrough()}
+            RunnableParallel({
+                "context": lambda x: self.vectorstore.as_retriever().invoke(x["question"]),
+                "question": lambda x: x["question"], 
+                "history": lambda x: x["history"]
+            })
             | self.prompt
             | self.llm
             | StrOutputParser()
         )
     
-    def ask(self, question: str, history: str = "", stream: bool = False) -> str:
-        result = ""
-        if not stream:
-            result = self.chain.invoke({ question: question, history: history })
-        else:
-            for chunk in self.chain.stream(question):
-                result += chunk
-                print(chunk, end='', flush=True)
-            print()
-        return result
+    def ask(self, question: str, history: str = "") -> str:
+        return self.chain.invoke({"question" : question, "history" : history})
+    
+    def ask_streaming(self, question: str, history: str = "") -> Iterator[str]:
+        for chunk in self.chain.stream({"question": question, "history": history}):
+            yield chunk
 

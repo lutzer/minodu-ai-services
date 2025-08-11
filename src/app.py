@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+from fastapi.responses import StreamingResponse
 import os
+import json
 
 from .rag.rag import RAG
 
@@ -24,14 +26,15 @@ class RagResponse(BaseModel):
 async def root():
     return {"message": "Simple FastAPI boilerplate"}
 
-@app.post("/rag/ask", response_model=RagResponse)
+@app.post("/rag/ask")
 async def rag_ask(request: RagRequest):
-    print("rag ask")
-    rag = RAG(request.language)
-    result = rag.ask(request.question, request.conversation, stream=False)
+    rag = RAG(language=request.language)
 
-    response = RagResponse(
-        status="success",
-        answer=result
+    def generate_stream():
+        for chunk in rag.ask_streaming(request.question, request.conversation):
+            yield chunk
+
+    return StreamingResponse(
+        generate_stream(),
+        media_type="text/plain"
     )
-    return response
