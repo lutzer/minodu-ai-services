@@ -7,15 +7,11 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain.schema.output_parser import StrOutputParser
 from langchain_chroma import Chroma
-from langchain.prompts import PromptTemplate
 import chromadb
 from chromadb.config import Settings
-import argparse
 import textwrap
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
-from document_store import DocumentStore
 
 # Suppress ChromaDB warnings and telemetry errors
 logging.getLogger("chromadb").setLevel(logging.ERROR)

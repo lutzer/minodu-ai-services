@@ -14,10 +14,12 @@
 
 ### Install Models
 
-```
-ollama pull llama3.2:1b
-ollama pull nomic-embed-text  # For embeddings
-```
+* install ollama models
+  ```
+  ollama pull llama3.2:1b
+  ollama pull nomic-embed-text  # For embeddings
+  ```
+* unzip vosk models with `cd models &&unzip *.zip`
 
 ### Setup Service API
 
@@ -27,37 +29,11 @@ ollama pull nomic-embed-text  # For embeddings
 * then `source .venv/bin/activate`to activate it
 * `pip install -r requirements.txt`  to install dependencies
 
-### Setup Chatbot Python Script
-
-* go into *rag* folder and run `python -m venv .venv`
-
+### Add Documents to chatbot
 
 * add documents with `python src/rag.py --add-docs ../documents/fr/ --language=fr`
+* add documents with `python src/rag.py --add-docs ../documents/en/ --language=en`
 
-### Setup api
-
-* check [rag-api/README.md](rag-api/README.md)
-
-### setup Speech to text
-
-* go into *tts* folder and run `python -m venv .venv`
-* then `source .venv/bin/activate`to activate it
-* `apt-get install portaudio`
-* `pip install -r requirements.txt`
-* unpack zip files in model folder
-
-## Model Benchmark
-
-| Model         | First token time    | Token time | 
-| ----          | ----                | ----       | 
-| llama3.2:1b   |                     |            |
-| gemma2:2b     |                     |            |
-
-## TODO
-
-* try out 
-  * Llama 3.2 3B: Often faster inference than Gemma2:2b despite being larger
-  * Qwen2.5 1.5B: Excellent context handling, very efficient
 
 
 

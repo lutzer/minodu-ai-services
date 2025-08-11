@@ -1,2 +1,5 @@
 .venv
 __pycache__
+models/*.*
+!models/*.zip
+src/rag/database

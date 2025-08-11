@@ -7,7 +7,7 @@ from stt.stt_transcriber import SttTranscriber
 
 def main():
     parser = argparse.ArgumentParser(description="Speech to Text Transcription")
-    parser.add_argument('file', nargs='?', default=None, help="Audio file to transcribe, if empty it records from the mic")
+    parser.add_argument('file', help="Audio file to transcribe")
     parser.add_argument("--language", default="en", help="Conversation language, either en or fr")
     parser.add_argument('--file', help="Audio file to transcribe")
     args = parser.parse_args()
@@ -17,13 +17,9 @@ def main():
         parser.print_help()
         return
 
-    if args.file is None:
-        transcriber = SttTranscriber(args.language)
-        transcriber.transcribe_mic_stream()
-    else:
-        transcriber = SttTranscriber(args.language)
-        result = transcriber.transcribe_file(args.file)
-        print(result)
+    transcriber = SttTranscriber(args.language)
+    result = transcriber.transcribe_file(args.file)
+    print(result)
 
 if __name__ == "__main__":
     main()

@@ -1,5 +1,6 @@
 import argparse
 from rag.rag import RAG
+from rag.document_store import DocumentStore
 
 def main():
     parser = argparse.ArgumentParser(description="RAG running lama3.2:1b")
