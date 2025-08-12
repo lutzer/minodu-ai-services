@@ -10,8 +10,8 @@
   ```
 
 * Install olama `curl -fsSL https://ollama.com/install.sh | sh`
-* install node js `curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash - &&\ sudo apt-get install -y nodejs`
-
+* install node js `curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash - &&\ sudo apt-get install -y  nodejs`
+* install ffmpeg: `sudo apt-get install ffmpeg`
 ### Install Models
 
 * install ollama models
