@@ -70,19 +70,19 @@ class SttTranscriber:
             
             result = json.loads(recognizer.FinalResult())
             return result["text"]
-        
+    
+    def transcribe_file_buffer(self, file_buffer, filename):
 
-    def transcribe_file(self, file):
-        if file.name.lower().endswith(".mp3"):
-            audio = AudioSegment.from_mp3(file)
+        if filename.lower().endswith(".mp3"):
+            audio = AudioSegment.from_mp3(file_buffer)
             audio = audio.set_channels(1).set_sample_width(2)
 
             wav_io = io.BytesIO()
             audio.export(wav_io, format="wav")
             return self.transcribe_raw(wav_io)
 
-        elif file.name.lower().endswith(".wav"):
-            audio = AudioSegment.from_wav(file)
+        elif filename.lower().endswith(".wav"):
+            audio = AudioSegment.from_wav(file_buffer)
 
             if audio.channels != 1:
                 audio = audio.set_channels(1).set_sample_width(2)
@@ -90,9 +90,13 @@ class SttTranscriber:
                 audio.export(wav_io, format="wav")
                 return self.transcribe_raw(wav_io)
             else:
-                # Already mono — just ensure buffer position is at start
-                file.seek(0)
-                return self.transcribe_raw(file)
+                # Already mono
+                return self.transcribe_raw(file_buffer)
 
         else:
             raise Exception("Audio file must be WAV or MP3 format.")
+
+    def transcribe_file(self, file):
+        buffer = io.BytesIO(file.read())
+        filename = file.name
+        return self.transcribe_file_buffer(buffer, filename)

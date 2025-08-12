@@ -34,6 +34,10 @@
 * add documents with `python src/rag.py --add-docs data/documents/fr/ --language=fr`
 * add documents with `python src/rag.py --add-docs data/documents/en/ --language=en`
 
+## Tests
+
+* run with `pytest`or `pytest -s`
+
 
 
 

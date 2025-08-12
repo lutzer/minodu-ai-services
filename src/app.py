@@ -50,12 +50,8 @@ async def stt_transcribe(file: UploadFile, language: str = Form(...)):
     data = io.BytesIO(content)
   
     # Load MP3 file
-    result = transcriber.transcribe_raw(data)
-    
-    # result = transcriber.transcribe_file(file.file)
-    # return SttResponse(
-    #     text=result
-    # )
+    result = transcriber.transcribe_file_buffer(data, file.filename)
+
     return SttResponse(
         text=result
     )
