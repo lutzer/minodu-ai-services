@@ -7,7 +7,6 @@ from src.app import app
 # Create test client
 client = TestClient(app)
 
-@pytest.mark.skip()
 class TestRagAPI:
 
     def test_ask(self):

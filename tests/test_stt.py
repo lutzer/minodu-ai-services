@@ -23,7 +23,8 @@ class TestSttAPI:
             )
     
         assert response.status_code == 200
-        assert(len(response.text) > 0)
+        data = response.json()
+        assert(len(data["text"]) > 0)
     
     def test_transcribe_stereo(self):
         file_path = os.path.join(script_dir, "audio/english_sample_stereo.wav")
@@ -35,7 +36,8 @@ class TestSttAPI:
             )
     
         assert response.status_code == 200
-        assert(len(response.text) > 0)
+        data = response.json()
+        assert(len(data["text"]) > 0)
 
     def test_transcribe_mp3(self):
         file_path = os.path.join(script_dir, "audio/french_sample.mp3")
