@@ -18,7 +18,8 @@ def main():
         return
 
     transcriber = SttTranscriber(args.language)
-    result = transcriber.transcribe_file(args.file)
+    with open(args.file, "rb") as file:
+        result = transcriber.transcribe_file(file)
     print(result)
 
 if __name__ == "__main__":
