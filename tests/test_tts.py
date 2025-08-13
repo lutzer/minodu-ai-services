@@ -64,6 +64,33 @@ class TestTts:
 
         os.remove(output_path)
 
+    def test_create_wave_header(self):
+        header = SpeechGenerator.create_wav_header()
+        assert(len(header) > 0)
+
+    def test_generate_streaming_wave(self):
+        output_path = os.path.join(script_dir, "output.wav")
+
+        generator = SpeechGenerator("en")
+
+        audio_chunks = []
+        
+        for audio_chunk in generator.synthesize("Hello, how are you? This is an Example Text."):
+            audio_chunks.append(audio_chunk)
+
+        header = SpeechGenerator.create_wav_header(generator.samplerate(), generator.channels())
+
+        with open(output_path, "wb") as f:
+            f.write(header)
+            for chunk in audio_chunks:
+                f.write(chunk)
+
+        assert(os.path.exists(output_path))
+
+        os.remove(output_path)
+
+
+
 
    
 

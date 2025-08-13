@@ -2,6 +2,7 @@ import wave
 from piper import PiperVoice
 import os
 import io
+import struct
 
 class SpeechGenerator:
     def __init__(self, language="en"):
@@ -40,3 +41,29 @@ class SpeechGenerator:
         
         buffer.seek(0)  # Reset to beginning for reading
         return buffer
+    
+    def create_wav_header(sample_rate=44100, num_channels=2, bits_per_sample=16, data_size=0xFFFFFFFF - 36):
+        """Create a WAV file header for raw audio data."""
+        byte_rate = sample_rate * num_channels * bits_per_sample // 8
+        block_align = num_channels * bits_per_sample // 8
+        
+        header = struct.pack('<4sI4s',
+                            b'RIFF',
+                            36 + data_size,
+                            b'WAVE')
+        
+        header += struct.pack('<4sIHHIIHH',
+                            b'fmt ',
+                            16,
+                            1,
+                            num_channels,
+                            sample_rate,
+                            byte_rate,
+                            block_align,
+                            bits_per_sample)
+        
+        header += struct.pack('<4sI',
+                            b'data',
+                            data_size)
+        
+        return header

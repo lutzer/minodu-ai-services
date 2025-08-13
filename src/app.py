@@ -69,6 +69,7 @@ async def stt_transcribe(file: UploadFile, language: str = Form(...)):
 class TtsRequest(BaseModel):
     language: str
     text: str
+    return_header: bool = True
 
 @app.post("/tts/synthesize")
 async def synthesize_speech(request: TtsRequest):
@@ -76,6 +77,10 @@ async def synthesize_speech(request: TtsRequest):
         generator = SpeechGenerator(request.language)
         
         def generate_audio():
+            if request.return_header:
+                header = SpeechGenerator.create_wav_header(generator.samplerate(), generator.channels())
+                yield header
+
             for audio_chunk in generator.synthesize(request.text):
                 yield audio_chunk
         
