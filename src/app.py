@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile
+from fastapi import FastAPI, UploadFile, HTTPException
 from pydantic import BaseModel
 from fastapi.responses import StreamingResponse
 from fastapi import Form
@@ -9,21 +9,26 @@ import io
 
 from .rag.rag import RAG
 from .stt.stt_transcriber import SttTranscriber
+from .tts.speech_generator import SpeechGenerator
 
 api_prefix = os.getenv('API_PREFIX', "/services")
 
 # Initialize FastAPI app with root_path prefix
 app = FastAPI(root_path=api_prefix)
 
-# Request model
-class RagRequest(BaseModel):
-    conversation: str
-    language: str
-    question: str
+
+
 
 @app.get("/")
 async def root():
     return {"message": "Minodu Service API"}
+
+### RAG API ###
+
+class RagRequest(BaseModel):
+    conversation: str
+    language: str
+    question: str
 
 @app.post("/rag/ask")
 async def rag_ask(request: RagRequest):
@@ -37,6 +42,8 @@ async def rag_ask(request: RagRequest):
         generate_stream(),
         media_type="text/plain"
     )
+
+### SPEECH TO TEXT API ###
 
 class SttResponse(BaseModel):
     text: str
@@ -55,18 +62,32 @@ async def stt_transcribe(file: UploadFile, language: str = Form(...)):
         text=result
     )
 
+
+
+### TEXT TO SPEECH API ###
+
 class TtsRequest(BaseModel):
     language: str
     text: str
 
-@app.post("/tts/speak")
-async def stt_transcribe(request: TtsRequest):
-
-    def generate_stream():
-        for chunk in rag.ask_streaming(request.question, request.conversation):
-            yield chunk
-
-    return StreamingResponse(
-        generate_stream(), 
-        media_type="audio/mp3"
-    )
+@app.post("/tts/synthesize")
+async def synthesize_speech(request: TtsRequest):
+    try:
+        generator = SpeechGenerator(request.language)
+        
+        def generate_audio():
+            for audio_chunk in generator.synthesize(request.text):
+                yield audio_chunk
+        
+        return StreamingResponse(
+            generate_audio(),
+            media_type="audio/wav",
+            headers={
+                "Content-Disposition": "attachment; filename=speech.wav",
+                "X-Sample-Rate": str(generator.samplerate()),
+                "X-Channels": str(generator.channels())
+            }
+        )
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Speech synthesis failed: {str(e)}")
