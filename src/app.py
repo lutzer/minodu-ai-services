@@ -17,9 +17,6 @@ api_prefix = os.getenv('API_PREFIX', "/services")
 # Initialize FastAPI app with root_path prefix
 app = FastAPI(root_path=api_prefix)
 
-
-
-
 @app.get("/")
 async def root():
     return {"message": "Minodu Service API"}
@@ -36,7 +33,8 @@ async def rag_ask(request: RagRequest):
     rag = RAG(language=request.language)
 
     def generate_stream():
-        for chunk in rag.ask_streaming(request.question, request.conversation):
+        data = RAG.RagRequestData(request.question, request.conversation)
+        for chunk in rag.ask_streaming(data):
             yield chunk
 
     return StreamingResponse(

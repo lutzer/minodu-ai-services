@@ -11,6 +11,7 @@ import chromadb
 from chromadb.config import Settings
 import textwrap
 from typing import Iterator
+from dataclasses import dataclass, asdict
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -22,6 +23,12 @@ logging.getLogger("chromadb.telemetry").setLevel(logging.CRITICAL)
 COLLECTION = ["documents_en", "documents_fr"]
 
 class RAG:
+
+    @dataclass
+    class RagRequestData:
+        question: str
+        history: str
+
     def __init__(self, language="en"):
 
         self.language = 0 if language == "en" else 1
@@ -125,10 +132,10 @@ class RAG:
             | StrOutputParser()
         )
     
-    def ask(self, question: str, history: str = "") -> str:
-        return self.chain.invoke({"question" : question, "history" : history})
+    def ask(self, request: RagRequestData) -> str:
+        return self.chain.invoke(asdict(request))
     
-    def ask_streaming(self, question: str, history: str = "") -> Iterator[str]:
-        for chunk in self.chain.stream({"question": question, "history": history}):
+    def ask_streaming(self, request: RagRequestData) -> Iterator[str]:
+        for chunk in self.chain.stream(asdict(request)):
             yield chunk
 
