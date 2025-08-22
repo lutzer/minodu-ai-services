@@ -1,4 +1,4 @@
 tests/audio/*.wav filter=lfs diff=lfs merge=lfs -text
-data/stt_models/*.zip filter=lfs diff=lfs merge=lfs -text
-data/documents/**/*.pdf filter=lfs diff=lfs merge=lfs -text
-data/tts_models/*.onnx filter=lfs diff=lfs merge=lfs -text
+models/stt_models/*.zip filter=lfs diff=lfs merge=lfs -text
+models/tts_models/*.onnx filter=lfs diff=lfs merge=lfs -text
+documents/**/*.pdf filter=lfs diff=lfs merge=lfs -text

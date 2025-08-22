@@ -11,7 +11,7 @@ class SttTranscriber:
     def __init__(self, language="en"):
         script_dir = os.path.dirname(os.path.abspath(__file__))
 
-        model_path = "../../data/stt_models/vosk-model-small-en-us-0.15" if language == "en" else "../../data/stt_models/vosk-model-small-fr-0.22"
+        model_path = "../../models/stt_models/vosk-model-small-en-us-0.15" if language == "en" else "../../models/stt_models/vosk-model-small-fr-0.22"
         model_path = os.path.join(script_dir, model_path)
         if not os.path.exists(model_path):
             print(f"Model '{model_path}' was not found. Please check the path.")

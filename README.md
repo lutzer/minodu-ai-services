@@ -1,5 +1,32 @@
 # MINODU BOT
 
+## Prerequisites
+
+* install olama `curl -fsSL https://ollama.com/install.sh | sh` or on mac: `brew install ollama`
+* start ollama with `ollama serve`
+* install models: `ollama pull llama3.2:1b && ollama pull nomic-embed-text`
+
+
+## Docker Setup
+
+```
+```
+https://collabnix.com/running-ollama-with-docker-for-python-applications/
+
+### Test Docker
+
+```
+#build with
+docker build -t minodu-ai .
+
+ #run
+docker run -p 3000:5005 minodu-ai
+
+#shell access
+docker exec -it minodu-ai /bin/sh
+```
+
+
 ## Setup
 
 * install raspberry pi os
@@ -10,8 +37,8 @@
   ```
 
 * Install olama `curl -fsSL https://ollama.com/install.sh | sh`
-* install node js `curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash - &&\ sudo apt-get install -y  nodejs`
 * install ffmpeg: `sudo apt-get install ffmpeg`
+
 ### Install Models
 
 * install ollama models
@@ -19,7 +46,7 @@
   ollama pull llama3.2:1b
   ollama pull nomic-embed-text  # For embeddings
   ```
-* unzip vosk models with `cd data/stt_models &&unzip *.zip`
+* unzip vosk models with `(cd models/stt_models && unzip vosk-model-small-fr-0.22.zip && unzip vosk-model-small-en-us-0.15.zip)`
 
 ### Setup Service API
 
@@ -33,6 +60,10 @@
 
 * add documents with `python src/rag.py --add-docs data/documents/fr/ --language=fr`
 * add documents with `python src/rag.py --add-docs data/documents/en/ --language=en`
+
+### Run API
+
+* run with `python main.py`
 
 ## Tests
 

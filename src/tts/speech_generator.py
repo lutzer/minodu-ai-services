@@ -8,7 +8,7 @@ class SpeechGenerator:
     def __init__(self, language="en"):
 
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        model_path = "../../data/tts_models/en_GB-cori-medium.onnx" if language == "en" else "../../data/tts_models/fr_FR-upmc-medium.onnx"
+        model_path = "../../models/tts_models/en_GB-cori-medium.onnx" if language == "en" else "../../models/tts_models/fr_FR-upmc-medium.onnx"
         model_path = os.path.join(script_dir, model_path)
         self.voice = PiperVoice.load(model_path)
 

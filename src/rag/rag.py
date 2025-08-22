@@ -26,14 +26,16 @@ class RAG:
 
         self.language = 0 if language == "en" else 1
 
-        self.llm = OllamaLLM(model="llama3.2:1b", temperature=0.1, keep_alive=600 )
+        ollama_host = os.environ.get("OLLAMA_HOST", "http://localhost:11434/")
+
+        self.llm = OllamaLLM(base_url=ollama_host, model="llama3.2:1b", temperature=0.1, keep_alive=600 )
         
         # Vector store setup (same as above)
-        self.embeddings = OllamaEmbeddings(model="nomic-embed-text")
+        self.embeddings = OllamaEmbeddings(base_url=ollama_host, model="nomic-embed-text")
 
         dirname = os.path.dirname(__file__)
         self.chroma_client = chromadb.PersistentClient(
-            path=os.path.join(dirname, 'database'),
+            path=os.path.join(dirname, '../../database'),
             settings=Settings(anonymized_telemetry=False)
         )
 

@@ -1,0 +1,11 @@
+services:
+  app:
+    build: .
+    ports:
+      - 3001:3001
+    environment:
+      - OLLAMA_HOST=host.docker.internal:11434
+
+volumes:
+    - ./data:/app/data
+    - ./database:/app/database
