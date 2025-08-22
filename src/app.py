@@ -8,6 +8,7 @@ import tempfile
 import io
 
 from .rag.rag import RAG
+from .weather.llm import WeatherLLM
 from .stt.stt_transcriber import SttTranscriber
 from .tts.speech_generator import SpeechGenerator
 
@@ -36,6 +37,28 @@ async def rag_ask(request: RagRequest):
 
     def generate_stream():
         for chunk in rag.ask_streaming(request.question, request.conversation):
+            yield chunk
+
+    return StreamingResponse(
+        generate_stream(),
+        media_type="text/plain"
+    )
+
+### WEATHER LLM ###
+
+class WeatherRequest(BaseModel):
+    temperature: float
+    humidity: float
+    language: str
+
+
+@app.post("/weather/text")
+async def weather_text(request: WeatherRequest):
+    weather_llm = WeatherLLM(language=request.language)
+
+    def generate_stream():
+        sensorData = WeatherLLM.SensorData(request.temperature, request.humidity)
+        for chunk in weather_llm.ask_streaming(sensorData):
             yield chunk
 
     return StreamingResponse(
