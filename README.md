@@ -1,17 +1,17 @@
 # MINODU BOT
 
-## Prerequisites
+## Prerequisites (on DEV and HOST machine)
 
 * install olama `curl -fsSL https://ollama.com/install.sh | sh` or on mac: `brew install ollama`
-* start ollama with `ollama serve`
+* add olama to autostart: `sudo systemctl enable ollama` (or manually start ollama with `ollama serve`)
 * install models: `ollama pull llama3.2:1b && ollama pull nomic-embed-text`
-
 
 ## Docker Setup
 
 ```
+# runs container (uses localy installed ollama)
+docker-compose up
 ```
-https://collabnix.com/running-ollama-with-docker-for-python-applications/
 
 ### Test Docker
 
@@ -20,14 +20,14 @@ https://collabnix.com/running-ollama-with-docker-for-python-applications/
 docker build -t minodu-ai .
 
  #run
-docker run -p 3000:5005 minodu-ai
+docker run -p 3000:3001 minodu-ai -e OLLAMA_HOST=<host_ip>>:11434
 
 #shell access
 docker exec -it minodu-ai /bin/sh
 ```
 
 
-## Setup
+## Dev Setup
 
 * install raspberry pi os
 
@@ -38,14 +38,6 @@ docker exec -it minodu-ai /bin/sh
 
 * Install olama `curl -fsSL https://ollama.com/install.sh | sh`
 * install ffmpeg: `sudo apt-get install ffmpeg`
-
-### Install Models
-
-* install ollama models
-  ```
-  ollama pull llama3.2:1b
-  ollama pull nomic-embed-text  # For embeddings
-  ```
 * unzip vosk models with `(cd models/stt_models && unzip vosk-model-small-fr-0.22.zip && unzip vosk-model-small-en-us-0.15.zip)`
 
 ### Setup Service API
@@ -67,7 +59,7 @@ docker exec -it minodu-ai /bin/sh
 
 ## Tests
 
-* run with `pytest`or `pytest -s`
+* run tests with `pytest`or `pytest -s`
 
 
 

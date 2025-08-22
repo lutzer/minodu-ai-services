@@ -5,7 +5,8 @@ services:
       - 3001:3001
     environment:
       - OLLAMA_HOST=host.docker.internal:11434
+    volumes:
+      - ./documents:/app/documents
+      - ./database:/app/database
+    restart: always
 
-volumes:
-    - ./data:/app/data
-    - ./database:/app/database
