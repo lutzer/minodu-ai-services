@@ -68,6 +68,7 @@ async def weather_text(request: WeatherRequest):
 
 class SttResponse(BaseModel):
     text: str
+    confidence: float
 
 @app.post("/stt/transcribe", response_model=SttResponse)
 async def stt_transcribe(file: UploadFile, language: str = Form(...)):
@@ -80,7 +81,8 @@ async def stt_transcribe(file: UploadFile, language: str = Form(...)):
     result = transcriber.transcribe_file_buffer(data, file.filename)
 
     return SttResponse(
-        text=result
+        text=result.text,
+        confidence=result.confidence
     )
 
 

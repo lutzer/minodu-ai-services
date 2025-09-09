@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import os
 import json
 import wave
@@ -6,8 +7,17 @@ import json
 from pydub import AudioSegment
 import tempfile
 import io
+from functools import reduce
+
+
+@dataclass
+class SttResult():
+    text: str
+    confidence: float
 
 class SttTranscriber:
+
+
     def __init__(self, language="en"):
         script_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -51,7 +61,7 @@ class SttTranscriber:
         #         sys.stdout.write('\r' + partial)
         #         sys.stdout.flush()
 
-    def transcribe_raw(self, wav_buffer: io.BytesIO):
+    def transcribe_raw(self, wav_buffer: io.BytesIO) -> SttResult:
         """method to process raw wav data with Vosk"""
         wav_buffer.seek(0)
 
@@ -69,9 +79,14 @@ class SttTranscriber:
                 recognizer.AcceptWaveform(data)
             
             result = json.loads(recognizer.FinalResult())
-            return result["text"]
+            confidenceLen = len(result["result"])
+            confidenceSum = reduce(lambda acc, curr: acc + curr["conf"], result["result"], 0.0)
+            return SttResult(
+                text = result["text"],
+                confidence = confidenceSum / confidenceLen
+            )
     
-    def transcribe_file_buffer(self, file_buffer, filename):
+    def transcribe_file_buffer(self, file_buffer, filename) -> SttResult:
 
         if filename.lower().endswith(".mp3"):
             audio = AudioSegment.from_mp3(file_buffer)
@@ -96,7 +111,7 @@ class SttTranscriber:
         else:
             raise Exception("Audio file must be WAV or MP3 format.")
 
-    def transcribe_file(self, file):
+    def transcribe_file(self, file) -> SttResult:
         buffer = io.BytesIO(file.read())
         filename = file.name
         return self.transcribe_file_buffer(buffer, filename)

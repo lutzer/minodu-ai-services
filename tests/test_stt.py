@@ -44,7 +44,7 @@ class TestSttAPI:
         with open(file_path, "rb") as f:
             response = client.post(
                 "/stt/transcribe",
-                files={"file": (os.path.basename(file_path), f, "audio/wav")},
+                files={"file": (os.path.basename(file_path), f, "audio/mpeg")},
                 data={"language": "fr"}
             )
     
@@ -58,17 +58,28 @@ class TestStt:
         transcriber = SttTranscriber(language="en")
         with open(os.path.join(script_dir, "audio/english_sample_mono.wav"), "rb") as file:
             result = transcriber.transcribe_file(file)
-        assert(len(result) > 0)
+        
+        assert(len(result.text) > 0)
+        assert(result.confidence > 0.8)
 
     def test_transcribe_english_stereo(self):
         transcriber = SttTranscriber(language="en")
         with open(os.path.join(script_dir, "audio/english_sample_stereo.wav"), "rb") as file:
             result = transcriber.transcribe_file(file)
-        assert(len(result) > 0)
+        assert(len(result.text) > 0)
+        assert(result.confidence > 0.8)
     
     def test_transcribe_french_mp3(self):
         transcriber = SttTranscriber(language="fr")
         with open(os.path.join(script_dir, "audio/french_sample.mp3"), "rb") as file:
             result = transcriber.transcribe_file(file)
-        assert(len(result) > 0)
+        assert(len(result.text) > 0)
+        assert(result.confidence > 0.8)
+
+    def test_transcribe_kabye_should_be_empty(self):
+        transcriber = SttTranscriber(language="fr")
+        with open(os.path.join(script_dir, "audio/kabye_sample_short.mp3"), "rb") as file:
+            result = transcriber.transcribe_file(file)
+        assert(len(result.text) > 0)
+        assert(result.confidence < 0.8)
 
