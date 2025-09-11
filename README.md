@@ -1,5 +1,7 @@
 # MINODU BOT
 
+*Deprecated, new repo can be found here: https://github.com/lutzer/minodu*
+
 ## Prerequisites (on DEV and HOST machine)
 
 * install olama `curl -fsSL https://ollama.com/install.sh | sh` or on mac: `brew install ollama`
